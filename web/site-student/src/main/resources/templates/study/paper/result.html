@@ -34,6 +34,10 @@
                                 <table class="table table-borderless mb-0">
                                     <tbody>
                                     <tr>
+                                        <th scope="row" class="p-1">응시자  :</th>
+                                        <td class="p-1"> <span th:text="*{user.name}"> 응시자 </span></td>
+                                    </tr>
+                                    <tr>
                                         <th scope="row" class="p-1">총  :</th>
                                         <td class="p-1"> <span th:text="*{total}">7</span> 문제 </td>
                                     </tr>
@@ -57,7 +61,7 @@
                                 </table>
                             </div>
                             <div style="width: 100%; padding: 3em;">
-                                <a href="javascript:window.history.back();"
+                                <a href="/study/papers"
                                    class="btn btn-block btn-outline-primary"> 돌아가기 </a>
                             </div>
                         </div>

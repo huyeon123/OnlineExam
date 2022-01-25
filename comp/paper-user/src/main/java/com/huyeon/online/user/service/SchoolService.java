@@ -4,6 +4,8 @@ package com.huyeon.online.user.service;
 import com.huyeon.online.user.domain.School;
 import com.huyeon.online.user.repository.SchoolRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +20,7 @@ public class SchoolService {
 
     private final SchoolRepository schoolRepository;
 
-    public School save(School school) {
+    public School save(School school){
         if(school.getSchoolId() == null){
             school.setCreated(LocalDateTime.now());
         }
@@ -26,20 +28,36 @@ public class SchoolService {
         return schoolRepository.save(school);
     }
 
-    public Optional<School> updateName(Long id, String name) {
-        return schoolRepository.findById(id)
-                .map(s -> {
-                    s.setName(name);
-                    schoolRepository.save(s);
-                    return s;
-                });
+    public Optional<School> findSchool(Long shcoolId){
+        return schoolRepository.findById(shcoolId);
     }
 
-    public List<String> cities() {
+    public Page<School> list(int pageNum, int size){
+        return schoolRepository.findAllByOrderByCreatedDesc(PageRequest.of(pageNum-1, size));
+    }
+
+    public List<School> getSchoolList(String city){
+        return schoolRepository.findAllByCity(city);
+    }
+
+    public Optional<School> updateName(Long schoolId, String name){
+        return schoolRepository.findById(schoolId).map(school -> {
+            school.setName(name);
+            schoolRepository.save(school);
+            return school;
+        });
+    }
+
+    public List<String> cities(){
         return schoolRepository.getCities();
     }
 
     public List<School> findAllByCity(String city) {
         return schoolRepository.findAllByCity(city);
     }
+
+    public long count() {
+        return schoolRepository.count();
+    }
+
 }

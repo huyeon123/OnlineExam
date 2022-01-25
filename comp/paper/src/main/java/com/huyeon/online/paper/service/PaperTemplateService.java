@@ -6,6 +6,7 @@ import com.huyeon.online.paper.repository.PaperTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,6 +79,7 @@ public class PaperTemplateService {
         problemService.updateProblem(problemId, content, answer);
     }
 
+    //@PostAuthorize("returnObject.isEmpty() || returnObject.get().userId == principal.userId")
     @Transactional(readOnly = true)
     public Optional<PaperTemplate> findProblemTemplate(Long paperTemplateId) {
         return paperTemplateRepository.findById(paperTemplateId).map(pt->{

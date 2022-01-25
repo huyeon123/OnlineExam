@@ -29,7 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User save(User user) throws DataIntegrityViolationException {
-        if (user.getUserId() == null) {
+        if(user.getUserId() == null){
             user.setCreated(LocalDateTime.now());
         }
         user.setUpdated(LocalDateTime.now());
@@ -40,24 +40,24 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public Page<User> listUser(int pageNum, int size) {
-        return userRepository.findAll(PageRequest.of(pageNum - 1, size));
+    public Page<User> listUser(int pageNum, int size){
+        return userRepository.findAll(PageRequest.of(pageNum-1, size));
     }
 
-    public Map<Long, User> getUsers(List<Long> userIds) {
+    public Map<Long, User> getUsers(List<Long> userIds){
         return StreamSupport.stream(userRepository.findAllById(userIds).spliterator(), false)
                 .collect(Collectors.toMap(User::getUserId, Function.identity()));
     }
 
-    public void addAuthority(Long userId, String authority) {
-        userRepository.findById(userId).ifPresent(user -> {
+    public void addAuthority(Long userId, String authority){
+        userRepository.findById(userId).ifPresent(user->{
             Authority newRole = new Authority(user.getUserId(), authority);
-            if (user.getAuthorities() == null) {
+            if(user.getAuthorities() == null){
                 HashSet<Authority> authorities = new HashSet<>();
                 authorities.add(newRole);
                 user.setAuthorities(authorities);
                 save(user);
-            } else if (!user.getAuthorities().contains(newRole)) {
+            }else if(!user.getAuthorities().contains(newRole)){
                 HashSet<Authority> authorities = new HashSet<>();
                 authorities.addAll(user.getAuthorities());
                 authorities.add(newRole);
@@ -67,13 +67,13 @@ public class UserService {
         });
     }
 
-    public void removeAuthority(Long userId, String authority) {
-        userRepository.findById(userId).ifPresent(user -> {
-            if (user.getAuthorities() == null) return;
+    public void removeAuthority(Long userId, String authority){
+        userRepository.findById(userId).ifPresent(user->{
+            if(user.getAuthorities()==null) return;
             Authority targetRole = new Authority(user.getUserId(), authority);
-            if (user.getAuthorities().contains(targetRole)) {
+            if(user.getAuthorities().contains(targetRole)){
                 user.setAuthorities(
-                        user.getAuthorities().stream().filter(auth -> !auth.equals(targetRole))
+                        user.getAuthorities().stream().filter(auth->!auth.equals(targetRole))
                                 .collect(Collectors.toSet())
                 );
                 save(user);
@@ -114,14 +114,14 @@ public class UserService {
     }
 
     public void updateUserSchoolTeacher(Long userId, Long schoolId, Long teacherId) {
-        userRepository.findById(userId).ifPresent(user -> {
-            if (!user.getSchool().getSchoolId().equals(schoolId)) {
+        userRepository.findById(userId).ifPresent(user->{
+            if(!user.getSchool().getSchoolId().equals(schoolId)) {
                 schoolRepository.findById(schoolId).ifPresent(school -> user.setSchool(school));
             }
-            if (!user.getTeacher().getUserId().equals(teacherId)) {
-                findUser(teacherId).ifPresent(teacher -> user.setTeacher(teacher));
+            if(!user.getTeacher().getUserId().equals(teacherId)){
+                findUser(teacherId).ifPresent(teacher->user.setTeacher(teacher));
             }
-            if (user.getSchool().getSchoolId() != user.getTeacher().getSchool().getSchoolId()) {
+            if(user.getSchool().getSchoolId() != user.getTeacher().getSchool().getSchoolId()){
                 throw new IllegalArgumentException("해당 학교의 선생님이 아닙니다.");
             }
             save(user);
@@ -131,7 +131,6 @@ public class UserService {
     public long countTeacher() {
         return userRepository.countAllByAuthoritiesIn(Authority.ROLE_TEACHER);
     }
-
     public long countTeacher(long schoolId) {
         return userRepository.countAllByAuthoritiesIn(schoolId, Authority.ROLE_TEACHER);
     }
@@ -139,17 +138,16 @@ public class UserService {
     public long countStudent() {
         return userRepository.countAllByAuthoritiesIn(Authority.ROLE_STUDENT);
     }
-
     public long countStudent(long schoolId) {
         return userRepository.countAllByAuthoritiesIn(schoolId, Authority.ROLE_STUDENT);
     }
 
     public Page<User> listStudents(Integer pageNum, Integer size) {
-        return userRepository.findAllByAuthoritiesIn(Authority.ROLE_STUDENT, PageRequest.of(pageNum - 1, size));
+        return userRepository.findAllByAuthoritiesIn(Authority.ROLE_STUDENT, PageRequest.of(pageNum-1, size));
     }
 
     public Page<User> listTeachers(Integer pageNum, Integer size) {
-        return userRepository.findAllByAuthoritiesIn(Authority.ROLE_TEACHER, PageRequest.of(pageNum - 1, size));
+        return userRepository.findAllByAuthoritiesIn(Authority.ROLE_TEACHER, PageRequest.of(pageNum-1, size));
     }
 
 }
