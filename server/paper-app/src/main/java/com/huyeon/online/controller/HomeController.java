@@ -26,6 +26,11 @@ public class HomeController {
     @PostMapping("/login")
     public String loginTest(@RequestParam String site, Model model) {
         model.addAttribute("site", site);
-        return "redirect:/";
+        return "redirect:/"+site;
+    }
+
+    @GetMapping("/signup")
+    public String signUp(@RequestParam String site) {
+        return "redirect:/" + site + "/signup";
     }
 }
